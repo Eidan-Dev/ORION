@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ORION – You talk, it builds, it publishes, it sells</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{display:flex;flex-direction:column;height:100dvh;background:#0A0A0A;color:#e6edf3;font-family:Inter,system-ui,sans-serif;font-size:14px}
+.grad{background:linear-gradient(135deg,#7C3AED,#3B82F6)}
+.bar{background:#0A0A0A;border-color:#222;border-style:solid;border-width:0}
+#top{padding:env(safe-area-inset-top,0px) 12px 0;border-bottom-width:1px;height:calc(44px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:12px;position:relative;z-index:5}
+#bot{border-top-width:1px;height:calc(28px + env(safe-area-inset-bottom,0px));padding:0 12px env(safe-area-inset-bottom,0px);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#8b949e}
+.btn{border:1px solid #30363d;border-radius:8px;padding:5px 10px;font-size:13px;color:#e6edf3;background:transparent;cursor:pointer;white-space:nowrap}
+.btn:hover{background:#ffffff0d}
+.btn.p{border:0;color:#fff;font-weight:600}
+#tabs{flex:1;display:flex;gap:4px;overflow-x:auto;min-width:0;justify-content:center}
+.tab{padding:5px 12px;border-radius:7px;font-size:13px;color:#8b949e;cursor:pointer;white-space:nowrap;background:none;border:0}
+.tab.on{background:#161b22;color:#fff}
+#app{flex:1;min-height:0;display:flex}
+.pane{display:flex;flex-direction:column;min-width:0;min-height:0}
+#pSide{width:220px;border-right:1px solid #222;background:#0d0d10;padding:10px;overflow-y:auto}
+#center{flex:1;display:flex;min-width:0}
+#pEdit{flex:1;background:#0D1117;border-right:1px solid #222}
+#pPrev{flex:1;background:#fff}
+#pChat{width:360px;border-left:1px solid #222;background:#0d0d10}
+.h{height:38px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #222;font-size:12px;color:#8b949e;background:#0A0A0A}
+.sec{font-size:11px;letter-spacing:.08em;color:#6e7681;margin:14px 0 6px;text-transform:uppercase}
+.file{padding:5px 8px;border-radius:6px;cursor:pointer;color:#c9d1d9;display:block;width:100%;text-align:left;background:none;border:0;font-size:13px}
+.file:hover,.file.on{background:#ffffff12}
+.mem div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:12px;color:#8b949e}
+.mem b{color:#e6edf3;font-weight:500;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px}
+#ed{position:relative;flex:1;min-height:0;display:flex}
+#ln,#hl,#ta{font:13px/20px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0;padding:12px 0}
+#ln{width:44px;flex:none;text-align:right;padding-right:10px;color:#484f58;overflow:hidden;user-select:none;white-space:pre}
+#box{position:relative;flex:1;min-width:0}
+#hl,#ta{position:absolute;inset:0;padding-left:8px;padding-right:12px;white-space:pre;tab-size:2;overflow:auto;border:0;width:100%;height:100%}
+#hl{overflow:hidden;color:#c9d1d9;pointer-events:none}
+#ta{background:transparent;color:transparent;caret-color:#fff;resize:none;outline:none}
+#ta::selection{background:#3b82f666}
+.t{color:#7ee787}.a{color:#79c0ff}.s{color:#a5d6ff}.c{color:#8b949e;font-style:italic}.k{color:#ff7b72}.n{color:#d2a8ff}
+#find{display:none;gap:6px;padding:6px 12px;background:#161b22;border-bottom:1px solid #222}
+#find input{background:#0D1117;border:1px solid #30363d;border-radius:6px;color:#fff;padding:4px 8px;font-size:13px;flex:1;min-width:0}
+iframe{border:0;width:100%;flex:1;background:#fff}
+#chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:92%;padding:9px 12px;border-radius:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;font-size:14px}
+.m.o{background:#ffffff12;align-self:flex-start}
+.m.u{background:linear-gradient(135deg,#7C3AED,#3B82F6);align-self:flex-end}
+.diff{font:12px ui-monospace,Menlo,monospace;color:#7ee787}
+#inp{flex:1;min-width:0;background:#000;border:1px solid #30363d;border-radius:10px;padding:10px 12px;color:#fff;font-size:16px}
+.chip{border:1px solid #30363d;border-radius:999px;padding:5px 10px;font-size:12px;background:none;color:#c9d1d9;white-space:nowrap;cursor:pointer}
+.chip:hover{background:#ffffff12}
+#mnav{display:none;border-bottom:1px solid #222}
+#mnav button{flex:1;padding:10px;background:none;border:0;color:#8b949e;font-size:13px;border-bottom:2px solid transparent}
+#mnav button.on{color:#fff;border-color:#7C3AED}
+#modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+#mbox{background:#14141a;border:1px solid #30363d;border-radius:16px;padding:22px;max-width:420px;width:100%}
+.dot{width:7px;height:7px;border-radius:50%;background:#3fb950;display:inline-block}
+body[data-mode=simple] .co{display:none!important}
+body[data-mode=code] #tag{display:none}
+body[data-prev=off] #pPrev{display:none}
+body[data-mode=simple] #pChat{width:380px}
+@media(max-width:1023px){
+ #pSide,#tabs{display:none}
+ #mnav{display:flex}
+ .pane{display:none!important;width:100%!important;border:0!important}
+ body[data-tab=chat] #pChat,body[data-tab=prev] #pPrev,body[data-tab=code] #pEdit,body[data-tab=files] #pSide{display:flex!important}
+ #center{display:flex;flex:1;min-height:0}
+ body[data-tab=chat] #center,body[data-tab=files] #center{display:none}
+ #pChat,#pSide{flex:1}
+ #app{flex-direction:column}
+ #tg,#shareb{display:none}
+}
+@media(min-width:1024px){#fsel{display:none}}
+</style>
+</head>
+<body data-mode="simple" data-tab="chat" data-prev="on">
+
+<div id="top" class="bar">
+  <div style="font-weight:800;font-size:16px;letter-spacing:-.02em">◆ ORION</div>
+  <div id="tabs" class="co"></div>
+  <div id="tag" style="flex:1;text-align:center;color:#8b949e;font-size:13px" class="hidden lg:block">You talk, it builds, it publishes, it sells.</div>
+  <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+    <span style="font-size:12px;color:#8b949e;white-space:nowrap" class="hidden sm:inline"><i class="dot"></i> Memory: ON</span>
+    <button class="btn p grad" id="pub">Publish</button>
+    <button class="btn" id="shareb">Share Link</button>
+  </div>
+</div>
+
+<div id="mnav" class="bar"><button data-t="chat" class="on">Chat</button><button data-t="prev">Preview</button><button data-t="code">Code</button><button data-t="files">Files</button></div>
+
+<div id="app">
+  <aside id="pSide" class="pane co">
+    <div class="sec" style="margin-top:2px">MY PROJECT</div>
+    <div id="tree"></div>
+    <div id="nfwrap"><button class="btn" id="nf" style="margin-top:8px;width:100%">+ New File</button></div>
+    <div class="sec">Memory</div>
+    <div class="mem" id="mem"></div>
+  </aside>
+
+  <div id="center">
+    <section id="pEdit" class="pane co">
+      <div class="h">
+        <select id="fsel" style="background:#0D1117;color:#fff;border:1px solid #30363d;border-radius:6px;padding:3px"></select>
+        <span id="fname" class="hidden lg:inline" style="color:#c9d1d9"></span>
+        <span style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <label style="display:flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="lp" checked> Live Preview</label>
+          <button class="btn" id="fbtn">Find</button>
+          <button class="btn" id="cp">Copy</button>
+        </span>
+      </div>
+      <div id="find"><input id="fin" placeholder="Find in file (Enter = next)"><button class="btn" id="fx">×</button></div>
+      <div id="ed"><div id="ln"></div><div id="box"><pre id="hl"></pre><textarea id="ta" spellcheck="false" wrap="off" autocapitalize="off" autocomplete="off"></textarea></div></div>
+    </section>
+    <section id="pPrev" class="pane">
+      <div class="h" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7"><span id="url" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">orion.app/your-product</span><span id="live" style="display:none;color:#15803d;font-weight:600">● LIVE (demo)</span></div>
+      <iframe id="fr" title="Preview" sandbox="allow-scripts"></iframe>
+    </section>
+  </div>
+
+  <aside id="pChat" class="pane">
+    <div class="h" style="justify-content:space-between">
+      <b style="color:#fff;font-size:13px">ORION AI</b>
+      <span id="tg" style="display:flex;border:1px solid #30363d;border-radius:8px;overflow:hidden">
+        <button class="tab" data-m="simple" style="border-radius:0">SIMPLE MODE</button><button class="tab" data-m="code" style="border-radius:0">CODE MODE</button>
+      </span>
+    </div>
+    <div id="chat" aria-live="polite"></div>
+    <div style="padding:8px 12px 12px;border-top:1px solid #222">
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px" id="qa">
+        <button class="chip" data-q="Build a landing page">Build Landing Page</button>
+        <button class="chip" data-q="Make it dark">Make it Dark</button>
+        <button class="chip" data-q="Add a buy button">Add Buy Button</button>
+        <button class="chip" data-q="Make my TikTok script">Make TikTok Script</button>
+      </div>
+      <div style="display:flex;gap:8px"><input id="inp" placeholder="Ask ORION to build anything..." autocomplete="off" enterkeyhint="send"><button id="send" class="btn p grad" aria-label="Send" style="width:44px;font-size:16px">→</button></div>
+    </div>
+  </aside>
+</div>
+
+<div id="bot" class="bar">
+  <span><i class="dot"></i> ORION is ready &nbsp;·&nbsp; Free · Non-profit</span>
+  <span><a href="#" id="pub2" style="color:#a78bfa;text-decoration:none">Publish to <span id="pubu">orion.app/your-product</span></a> &nbsp;·&nbsp; <span id="errs">0 errors</span></span>
+</div>
+
+<div id="modal"><div id="mbox"></div></div>
+
+<script>
+(function(){
+var KEY="orion_ide_v1",$=function(s){return document.querySelector(s)};
+var S={user:"",prod:{},projects:[],files:{},open:["index.html","style.css"],active:"index.html",mode:"simple",msgs:[],attend:false,pub:false};
+try{var j=JSON.parse(localStorage.getItem(KEY)||"null");if(j&&typeof j==="object")S=Object.assign(S,j)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function esc(t){return String(t).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function cap(t){t=t.trim();return t.charAt(0).toUpperCase()+t.slice(1)}
+function slug(t){return (t||"your-product").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")||"your-product"}
+
+/* ---------- Templates: MRBEAST / CLEAN / DARK ---------- */
+var PUR="/* ORION purple buy button */\n#buy{background:#7C3AED;color:#fff;box-shadow:0 6px 24px #7C3AED66}\n";
+var LAB={ebook:"EBOOK",template:"TEMPLATE",coaching:"SPOT",course:"COURSE"};
+var PTS={ebook:["The basics, explained simply","The mistakes to avoid from day one","A step-by-step action plan"],template:["A ready-to-use layout","Customizable in minutes","Usable today"],coaching:["A clear plan for your situation","Personal follow-up by a real person","Real results, no theory"],course:["Short lessons you can finish","Practical exercises","Lifetime access to updates"]};
+function gen(p){
+  var n=esc(p.name),t=p.type||"ebook",st=p.style||"dark",cur=p.cur||"€",pr=p.price||19,old=Math.round(pr*2);
+  var buyL=st==="mrbeast"?"BUY NOW":st==="clean"?"Buy – "+pr+cur:"I WANT MY "+(LAB[t]||"EBOOK");
+  var pts=(PTS[t]||PTS.ebook).map(function(x){return "<li>"+x+"</li>"}).join("");
+  var rev=st==="mrbeast"?'<section class="rev"><div>★★★★★ Amazing, already using it! <small>(sample review)</small></div><div>★★★★★ Best purchase this month <small>(sample review)</small></div><div>★★★★★ Simple and effective <small>(sample review)</small></div></section>':"";
+  var badge=st==="mrbeast"?"🔥 LIMITED OFFER – 50% OFF TODAY":"";
+  var h2=st==="dark"?"Why it works":"What you will learn";
+  var html='<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>'+n+'</title>\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n<main class="wrap">\n'+(badge?'<span class="badge">'+badge+'</span>\n':'')+'<h1>'+n+'</h1>\n<p class="sub">Simple. Clear. Made to get results.</p>\n<div class="prices">'+(st==="mrbeast"?'<s class="old">'+old+cur+'</s> ':'')+'<span class="price">'+pr+cur+'</span></div>\n<button id="buy">'+buyL+'</button>\n<p class="proof">127 people already bought <small>(sample number)</small></p>\n<section class="learn">\n<h2>'+h2+'</h2>\n<ul>'+pts+'</ul>\n</section>\n'+rev+'</main>\n<div id="dlg" hidden>\n<div class="box">\n<h3>Great!</h3>\n<p>For V1, leave your email, ORION will send you the product. It’s free.</p>\n<small>Demo: no email is actually sent yet.</small>\n<input id="em" type="email" placeholder="you@email.com">\n<button id="ok">Confirm</button>\n</div>\n</div>\n<script src="script.js"><\/script>\n</body>\n</html>\n';
+  var th={mrbeast:"body{background:#FFE600;color:#000}h1{font-weight:900;text-transform:uppercase;line-height:.95}.badge{display:inline-block;background:#dc2626;color:#fff;font-weight:900;padding:8px 16px;border-radius:99px;margin-bottom:20px;font-size:14px}.old{font-size:24px;opacity:.6;font-weight:700}.price{font-size:64px;font-weight:900}#buy{background:#dc2626;color:#fff;font-weight:900;font-size:20px;box-shadow:0 6px 0 #7f1d1d;border-radius:16px}.rev div{background:#fff;border:4px solid #000;border-radius:16px;padding:14px;margin-top:12px;font-weight:600;text-align:left}",
+    clean:"body{background:#fff;color:#111}h1{font-weight:300;letter-spacing:-.02em}.sub{color:#737373}.price{font-size:28px;font-weight:300}#buy{background:#111;color:#fff;font-weight:500;border-radius:99px}li{border-top:1px solid #e5e5e5;padding:14px 0;text-align:left;color:#404040}ul{list-style:none;padding:0}.proof{color:#737373}",
+    dark:"body{background:#111;color:#fff}h1{color:#E6FF00;font-weight:900;text-transform:uppercase;line-height:.95}.sub{opacity:.7;text-transform:uppercase;letter-spacing:.06em;font-size:13px}.price{font-size:56px;font-weight:900}#buy{background:#E6FF00;color:#000;font-weight:900;border-radius:12px}h2{color:#E6FF00;text-transform:uppercase}li{border-top:1px solid #ffffff26;padding:14px 0;text-align:left}ul{list-style:none;padding:0}"}[st];
+  var css="/* "+st.toUpperCase()+" style */\n:root{--title:"+(p.title||56)+"px}\n*{box-sizing:border-box;margin:0}\nbody{font-family:Inter,system-ui,sans-serif}\n.wrap{max-width:720px;margin:auto;padding:48px 20px;text-align:center}\nh1{font-size:min(var(--title),13vw);margin-bottom:12px}\n.sub{margin-bottom:20px}\n.prices{margin:16px 0}\n#buy{width:100%;max-width:360px;padding:16px;border:0;font-size:18px;cursor:pointer}\n.proof{margin-top:14px;font-size:14px}\n.learn{max-width:420px;margin:40px auto 0}\nh2{margin-bottom:10px;font-size:18px}\n"+th.replace(/\}/g,"}\n")+"#dlg{position:fixed;inset:0;background:#0009;display:flex;align-items:center;justify-content:center}\n#dlg[hidden]{display:none}\n.box{background:#fff;color:#111;padding:24px;border-radius:16px;max-width:340px;width:90%;text-align:left}\n.box input,.box button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:1px solid #ccc;font-size:16px}\n.box button{background:#111;color:#fff;border:0;cursor:pointer}\n"+(p.purple?PUR:"");
+  var js="var dlg=document.getElementById('dlg'),em=document.getElementById('em');\ndocument.getElementById('buy').onclick=function(){dlg.hidden=false};\ndlg.onclick=function(e){if(e.target===dlg)dlg.hidden=true};\ndocument.getElementById('ok').onclick=function(){\n  if(!/^\\S+@\\S+\\.\\S+$/.test(em.value)){em.style.borderColor='red';return}\n  dlg.querySelector('.box').innerHTML='<h3>Thank you!</h3><p>Your email is noted.</p>';\n};\n";
+  return {"index.html":html,"style.css":css,"script.js":js};
+}
+
+/* ---------- Éditeur ---------- */
+function lang(f){return /\.css$/.test(f)?"css":/\.js$/.test(f)?"js":"html"}
+var RX={html:/(&lt;!--[\s\S]*?--&gt;)|(&lt;\/?[\w-]+)|(\s[\w:-]+(?==))|("[^"\n]*"|'[^'\n]*')/g,css:/(\/\*[\s\S]*?\*\/)|("[^"\n]*"|'[^'\n]*')|([\w-]+(?=\s*:))|(\b\d+(?:\.\d+)?(?:px|vw|em|%)?)/g,js:/(\/\/[^\n]*)|('[^'\n]*'|"[^"\n]*")|(\b(?:var|function|return|if|else|new|for)\b)|(\b\d+\b)/g};
+var CL={html:["c","t","a","s"],css:["c","s","a","n"],js:["c","s","k","n"]};
+function hi(code,l){return esc(code).replace(RX[l],function(){var a=arguments;for(var i=1;i<=4;i++)if(a[i]!==undefined)return '<span class="'+CL[l][i-1]+'">'+a[i]+"</span>";return a[0]})}
+var ta=$("#ta"),hl=$("#hl"),ln=$("#ln"),tm;
+function paint(){
+  var v=ta.value;hl.innerHTML=hi(v,lang(S.active))+"\n ";
+  var n=v.split("\n").length,s="";for(var i=1;i<=n;i++)s+=i+"\n";ln.textContent=s;
+  errs();
+}
+function errs(){var h=S.files["index.html"]||"",d=Math.abs((h.match(/<div/g)||[]).length-(h.match(/<\/div>/g)||[]).length);$("#errs").textContent=d+" error"+(d===1?"":"s")}
+function sync(){hl.scrollTop=ta.scrollTop;hl.scrollLeft=ta.scrollLeft;ln.scrollTop=ta.scrollTop}
+function preview(){
+  var h=S.files["index.html"]||"";
+  h=h.split('<link rel="stylesheet" href="style.css">').join("<style>"+(S.files["style.css"]||"")+"</style>");
+  h=h.split('<script src="script.js"><\/script>').join("<script>"+(S.files["script.js"]||"")+"<\/script>");
+  $("#fr").srcdoc=h;
+  var u="orion.app/"+slug(S.prod.name);$("#url").textContent=u;$("#pubu").textContent=u;
+  $("#live").style.display=S.pub?"inline":"none";
+}
+function show(f){
+  if(!S.files[f])return;S.active=f;if(S.open.indexOf(f)<0)S.open.push(f);
+  ta.value=S.files[f];$("#fname").textContent=f;paint();ta.scrollTop=0;sync();tabs();tree();save();
+}
+function tabs(){
+  $("#tabs").innerHTML=S.open.filter(function(f){return S.files[f]}).map(function(f){return '<button class="tab'+(f===S.active?" on":"")+'" data-f="'+esc(f)+'">'+esc(f)+"</button>"}).join("");
+  $("#fsel").innerHTML=Object.keys(S.files).map(function(f){return '<option'+(f===S.active?" selected":"")+">"+esc(f)+"</option>"}).join("");
+}
+function tree(){
+  $("#tree").innerHTML=Object.keys(S.files).map(function(f){return '<button class="file'+(f===S.active?" on":"")+'" data-f="'+esc(f)+'">'+esc(f)+"</button>"}).join("")+'<div class="file" style="cursor:default;color:#6e7681">assets / images</div>';
+}
+function memory(){
+  var p=S.prod,r=function(a,b){return "<div><span>"+a+"</span><b>"+esc(b||"–")+"</b></div>"};
+  $("#mem").innerHTML=r("Name",S.user)+r("Product",p.name)+r("Price",p.price?p.price+(p.cur||"€"):"")+r("Style",p.style)+r("Past projects",S.projects.length?S.projects.map(function(x){return x.name}).join(", "):"none");
+}
+ta.addEventListener("input",function(){
+  S.files[S.active]=ta.value;paint();clearTimeout(tm);tm=setTimeout(function(){preview();save()},250);
+});
+ta.addEventListener("scroll",sync);
+ta.addEventListener("keydown",function(e){
+  if(e.key==="Tab"){e.preventDefault();var s=ta.selectionStart;ta.value=ta.value.slice(0,s)+"  "+ta.value.slice(ta.selectionEnd);ta.selectionStart=ta.selectionEnd=s+2;ta.dispatchEvent(new Event("input"))}
+});
+function openFind(){$("#find").style.display="flex";$("#fin").focus()}
+document.addEventListener("keydown",function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==="f"&&document.body.dataset.mode==="code"){e.preventDefault();openFind()}
+  if(e.key==="Escape"){$("#find").style.display="none";closeM()}
+});
+$("#fbtn").onclick=openFind;$("#fx").onclick=function(){$("#find").style.display="none"};
+$("#fin").addEventListener("keydown",function(e){
+  if(e.key!=="Enter")return;var q=this.value.toLowerCase(),v=ta.value.toLowerCase();if(!q)return;
+  var i=v.indexOf(q,ta.selectionEnd);if(i<0)i=v.indexOf(q);
+  if(i>=0){ta.focus();ta.setSelectionRange(i,i+q.length);var line=ta.value.slice(0,i).split("\n").length;ta.scrollTop=Math.max(0,(line-5)*20);sync()}
+});
+$("#cp").onclick=function(){var b=$("#cp");function ok(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1200)}try{navigator.clipboard.writeText(ta.value).then(ok,ok)}catch(e){ok()}};
+$("#lp").onchange=function(){document.body.dataset.prev=this.checked?"on":"off"};
+$("#tabs").onclick=$("#tree").onclick=function(e){var b=e.target.closest("[data-f]");if(b){show(b.dataset.f);if(window.innerWidth<1024)setTab("code")}};
+$("#fsel").onchange=function(){show(this.value)};
+$("#nfwrap").onclick=function(e){
+  if(!e.target.closest("#nf"))return;
+  $("#nfwrap").innerHTML='<input id="nfi" placeholder="name.ext + Enter" style="width:100%;margin-top:8px;background:#000;border:1px solid #30363d;border-radius:6px;padding:6px;color:#fff;font-size:16px">';
+  var i=$("#nfi");i.focus();
+  i.onkeydown=function(e){
+    if(e.key==="Enter"){var n=i.value.trim().replace(/[^\w.\-]/g,"");if(n&&!S.files[n]){S.files[n]="";show(n)}resetNF()}
+    if(e.key==="Escape")resetNF();
+  };
+};
+function resetNF(){$("#nfwrap").innerHTML='<button class="btn" id="nf" style="margin-top:8px;width:100%">+ New File</button>'}
+
+/* ---------- Chat ---------- */
+function render(){
+  var c=$("#chat");c.innerHTML="";
+  S.msgs.forEach(function(m){var d=document.createElement("div");d.className="m "+m.r;d.innerHTML=(m.d?esc(m.t)+'\n<span class="diff">'+esc(m.d)+"</span>":esc(m.t));c.appendChild(d)});
+  c.scrollTop=c.scrollHeight;
+}
+function say(t,d){S.msgs.push({r:"o",t:t,d:d||""});S.msgs=S.msgs.slice(-40);save();render()}
+function diffCount(a,b){var A=(a||"").split("\n"),B=b.split("\n"),sa={},sb={},x=0,y=0;A.forEach(function(l){sa[l]=1});B.forEach(function(l){sb[l]=1});B.forEach(function(l){if(!sa[l])x++});A.forEach(function(l){if(!sb[l])y++});return [x,y]}
+var TY=[["ebook",/e-?book/i],["template",/template/i],["coaching",/coach/i],["course",/course|training/i]];
+var STOP=/^(my|a|an|the|for|sell|selling|build|me|landing|page|make|create|to|want|i|of|new|please|and|at|in|with|dark|clean|mrbeast|style|add|buy|button)$/i;
+function parse(t){
+  var o={},m;
+  for(var i=0;i<TY.length;i++)if(TY[i][1].test(t)){o.type=TY[i][0];break}
+  if(m=t.match(/(\d+(?:[.,]\d+)?)\s*(€|\$|euros?|eur|dollars?|usd)/i)||t.match(/\b(?:at|for|to)\s+(\d+)\b/i)){o.price=parseFloat(String(m[1]).replace(",","."));o.cur=/\$|dollar|usd/i.test(m[2]||"")?"$":"€"}
+  if(/mr\s?beast/i.test(t))o.style="mrbeast";else if(/\b(clean|minimal|apple|white)\b/i.test(t))o.style="clean";else if(/\b(dark|black|neon)\b/i.test(t))o.style="dark";
+  if(m=t.match(/(?:called|named)\s+["“]?(.+?)["”]?(?=\s+at\s|\s*\d|,|\.|$)/i)||t.match(/["“]([^"”]{2,50})["”]/))o.name=cap(m[1]);
+  else if(m=t.match(/\b((?:[a-z0-9’'-]+\s+){0,3})(e-?book|template|coaching|course)\b/i)){
+    var w=(m[1]||"").trim().split(/\s+/).filter(Boolean);while(w.length&&STOP.test(w[0]))w.shift();
+    if(w.length)o.name=cap(w.join(" ")+" "+m[2].toLowerCase());
+  }
+  return o;
+}
+function tiktok(p){var n=p.name||"my product",l="orion.app/"+slug(p.name);return "TikTok script – 30 seconds\n\nHOOK (0-3 s)\n“Stop scrolling. If you want "+n+", watch this.”\n\nPOINT 1 (3-12 s)\nNo experience needed: everything is explained simply, step by step.\n\nPOINT 2 (12-21 s)\nYou can apply it today, with no complicated tools.\n\nPOINT 3 (21-27 s)\nFor just "+(p.price||19)+(p.cur||"€")+", it costs less than a fast-food meal.\n\nCTA (27-30 s)\nLink in my bio: "+l+". Go!\n\nTip: film face to camera, big subtitles, say the first sentence in under 2 seconds."}
+function build(msg){
+  var old=Object.assign({},S.files),nf=gen(S.prod),d=[];
+  Object.keys(nf).forEach(function(f){var c=diffCount(old[f],nf[f]);d.push((old[f]?"~ ":"+ ")+f+"  +"+c[0]+" −"+c[1]);S.files[f]=nf[f]});
+  S.pub=false;S.attend=true;show(S.active in S.files?S.active:"index.html");preview();memory();
+  say(msg+"\n\nWant me to make your TikTok script to sell this page?",d.join("\n"));
+}
+function brain(t){
+  var l=t.toLowerCase(),p=S.prod,m;
+  if(m=t.match(/(?:my name is|call me)\s+([A-Za-zÀ-ÿ-]{2,20})/i)){S.user=cap(m[1]);memory();save()}
+  if(/\bpaid\b|subscription|is (it|orion) free|how much does (it|orion)/.test(l))return "No. ORION is free and non-profit. Built to help everyone build. In a few years, there might be a Pro version for big agencies, but for you, it will always be free.";
+  if(/i don.t (understand|know) (code|coding)|no code/.test(l))return "Don’t worry, you don’t need to understand anything. Just tell me what you want to sell, I take care of the rest.";
+  if((/^\s*(yes|yeah|yep|ok|sure|go|please)\b/.test(l)&&S.attend)||/tiktok|script/.test(l)){
+    if(!p.name)return "Tell me first what you’re selling (example: fitness ebook at 19€, dark style) and I’ll write the script right after.";
+    S.attend=false;return tiktok(p);
+  }
+  if(/(bigger|larger|smaller|reduce|increase).*(title|headline)|(title|headline).*(bigger|larger|smaller)/.test(l)){
+    var css=S.files["style.css"]||"",mm=css.match(/--title:(\d+)px/);
+    if(!mm)return "I need a landing page first. Tell me what you’re selling and I’ll build it.";
+    var cur=+mm[1],nw=/smaller|reduce/.test(l)?Math.max(24,cur-12):cur+12,old=css;
+    S.files["style.css"]=css.replace(/--title:\d+px/,"--title:"+nw+"px");p.title=nw;
+    show("style.css");preview();save();
+    var c=diffCount(old,S.files["style.css"]);
+    return {t:"Done. Your title is now "+nw+"px.",d:"~ style.css  +"+c[0]+" −"+c[1]};
+  }
+  var o=parse(t),had=!!(p.name&&p.price),newProd=o.name&&p.name&&o.name!==p.name;
+  if(newProd&&had){S.projects.push({name:p.name,price:p.price,cur:p.cur,style:p.style,type:p.type});S.prod=p={}}
+  var touched=false;for(var k in o){p[k]=o[k];touched=true}
+  S.prod=p;memory();save();
+  if(/buy button/.test(l)&&had&&(S.files["index.html"]||"").indexOf('id="buy"')<0){build("Done. I added your buy button.");return null}
+  if(/buy button/.test(l)&&(S.files["index.html"]||"").indexOf('id="buy"')>=0){
+    var oc=S.files["style.css"]||"";
+    if(oc.indexOf("ORION purple")<0)S.files["style.css"]=oc+PUR;
+    p.purple=true;S.prod=p;show("style.css");preview();save();
+    var cc=diffCount(oc,S.files["style.css"]);
+    say("Done. I made your buy button stand out in ORION purple, so more people click it.","~ style.css  +"+cc[0]+" \u2212"+cc[1]);
+    setTab("prev");return null;
+  }
+  if(!touched&&!/(build|create|make|landing)/.test(l)){
+    if(p.type&&!p.name&&t.length<50){p.name=cap(t.replace(/[.!?]+$/,""));S.prod=p;touched=true}
+    else return "I can build, change or fix anything on your page. Try: “Build me a landing page for my fitness ebook at 19€, dark style” or “Make the title bigger”.";
+  }
+  if(!p.style&&p.name)p.style=/fitness|gym|crypto|finance|trading|coaching/i.test(p.name+p.type)?"dark":/template|business|recipe|design/i.test(p.name+p.type)?"clean":"mrbeast";
+  S.prod=p;
+  if(p.name&&p.price){
+    var action=had&&!newProd&&o.style&&!o.name&&!o.price?"Done. I switched your page to the "+p.style+" style.":had&&!newProd?"Done. I updated your landing page.":"Done. I created your landing page, with a buy button and a "+p.style+" style.";
+    build(action);return null;
+  }
+  var miss=[];if(!p.name)miss.push("the name");if(!p.price)miss.push("the price");
+  return "Got it. I just need "+miss.join(" and ")+(p.style?"":" (and a style: MrBeast, Clean or Dark)")+". Example: “fitness ebook at 19€, dark style”.";
+}
+function send(txt){
+  txt=txt.trim();if(!txt)return;
+  S.msgs.push({r:"u",t:txt});save();render();
+  setTimeout(function(){
+    var r=brain(txt);
+    if(r===null)return;
+    if(typeof r==="object")say(r.t+"\n\nWant me to make your TikTok script to sell this page?",r.d);else say(r);
+    if(typeof r==="object")S.attend=true;
+  },450);
+  if(document.body.dataset.tab==="chat"&&/build|create|make|landing|dark|clean|mrbeast/i.test(txt)&&window.innerWidth<1024){}
+}
+$("#send").onclick=function(){var i=$("#inp"),v=i.value;i.value="";send(v)};
+$("#inp").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();$("#send").click()}});
+$("#qa").onclick=function(e){var b=e.target.closest("[data-q]");if(b)send(b.dataset.q)};
+
+/* ---------- Modes, onglets mobiles, publication ---------- */
+function setMode(m){S.mode=m;document.body.dataset.mode=m;document.querySelectorAll("#tg .tab").forEach(function(b){b.classList.toggle("on",b.dataset.m===m)});if(m==="code")show(S.active);save()}
+$("#tg").onclick=function(e){var b=e.target.closest("[data-m]");if(b)setMode(b.dataset.m)};
+function setTab(t){document.body.dataset.tab=t;document.querySelectorAll("#mnav button").forEach(function(x){x.classList.toggle("on",x.dataset.t===t)})}
+$("#mnav").onclick=function(e){var b=e.target.closest("[data-t]");if(b)setTab(b.dataset.t)};
+function closeM(){$("#modal").style.display="none"}
+function openM(h){$("#mbox").innerHTML=h;$("#modal").style.display="flex"}
+$("#modal").onclick=function(e){if(e.target.id==="modal")closeM()};
+function copyText(t,cb){
+  function fb(){var x=document.createElement("textarea");x.value=t;x.style.cssText="position:fixed;opacity:0";document.body.appendChild(x);x.select();var ok=false;try{ok=document.execCommand("copy")}catch(e){}x.remove();cb(ok)}
+  try{navigator.clipboard.writeText(t).then(function(){cb(true)},fb)}catch(e){fb()}
+}
+function publish(e){
+  if(e)e.preventDefault();
+  if(!S.prod.name||!S.prod.price){say("Before publishing, tell me what you’re selling (name + price) and I’ll build your page.");document.body.dataset.tab="chat";return}
+  S.pub=true;preview();save();var l="orion.app/"+slug(S.prod.name);
+  openM('<h3 style="font-size:20px;font-weight:800;margin-bottom:8px">Live! Your link:</h3><div style="background:#000;border-radius:10px;padding:12px;font-weight:600;word-break:break-all;margin-bottom:10px;color:#a78bfa">'+esc(l)+'</div><p style="color:#8b949e;margin-bottom:6px">Copy it to your TikTok bio.</p><p style="color:#6e7681;font-size:12px;margin-bottom:14px">Demo version: this address goes live when ORION launches.</p><button class="btn p grad" id="cl" style="width:100%;padding:10px">Copy Link</button><button id="tk" style="width:100%;margin-top:10px;padding:15px;border:0;border-radius:12px;background:#7C3AED;color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 0 0 3px #7C3AED55,0 8px 24px #7C3AED88">🎬 Get my TikTok Script</button><button class="btn" id="cx" style="width:100%;margin-top:10px">Close</button>');
+  $("#cx").onclick=closeM;
+  $("#tk").onclick=function(){closeM();var t=tiktok(S.prod);S.attend=false;copyText(t,function(ok){say(t+(ok?"\n\n\u2713 Copied to your clipboard.":""));setTab("chat")})};
+  $("#cl").onclick=function(){var b=$("#cl");function ok(){b.textContent="Link copied"}try{navigator.clipboard.writeText(l).then(ok,ok)}catch(x){ok()}};
+}
+$("#pub").onclick=publish;$("#shareb").onclick=publish;$("#pub2").onclick=publish;
+
+/* ---------- Démarrage ---------- */
+if(!S.files["index.html"])S.files=gen({name:"Your Product",price:19,cur:"€",type:"ebook",style:"dark"});
+S.open=S.open.filter(function(f){return S.files[f]});if(!S.open.length)S.open=["index.html"];
+if(!S.files[S.active])S.active="index.html";
+var greeted=false;try{greeted=sessionStorage.getItem("orion_hi")==="1";sessionStorage.setItem("orion_hi","1")}catch(e){}
+if(!S.msgs.length)S.msgs.push({r:"o",t:"You talk, it builds, it publishes, it sells.\n\nHi! I’m ORION. Tell me what you want to sell, for example: “Build me a landing page for my fitness ebook at 19€, dark style”. I’m free, and I remember you.",d:""});
+else if(S.prod.name&&S.prod.price&&!greeted)S.msgs.push({r:"o",t:"Welcome back"+(S.user?", "+S.user:"")+"! Want to edit your "+S.prod.name+" at "+S.prod.price+(S.prod.cur||"€")+"?",d:""});
+setMode(S.mode);show(S.active);preview();memory();render();
+})();
+</script>
+</body>
+</html>
